@@ -3,7 +3,7 @@ rhythm game music thingy piano tiles 2014
 
 
 # How make a song
-To make a song then make a `.song` file. The first section should contain a name, artist, mapper, difficult *(from 0 - 5, with 5 being hardest)*, the base64 of the cover-photo, and finally the base 64 of the song. A `#` is a comment btw. images need to be in `png` format, and songs need to be in `mp3` format👍👍👍
+To make a song then make a `.song` file. The first section should contain a name, artist, mapper, difficult *(from 1 - 5, with 5 being hardest)*, the base64 of the cover-photo, and finally the base 64 of the song. A `#` is a comment btw. images need to be in `png` format, and songs need to be in `mp3` format👍👍👍
 ```
 name: Song name here
 artist: jeff
