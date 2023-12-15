@@ -1,15 +1,21 @@
 class GameManager
 {
-	public static GameScreen Screen { get; set; }
-}
+	private static Scene currentScene;
 
-enum GameScreen
-{
-	MAIN_MENU,
-	SETTINGS_MENU,
+	public static void SetScene(Scene scene)
+	{
+		// Run the start method a single time
+		scene.Start();
+		currentScene = scene;
+	}
 
-	SONG_SELECT_MENU,
+	public static void UpdateCurrentScene()
+	{
+		currentScene.Update();
+	}
 
-	GAME,
-	GAME_RESULTS
+	public static void RenderCurrentScene()
+	{
+		currentScene.Render();
+	}
 }

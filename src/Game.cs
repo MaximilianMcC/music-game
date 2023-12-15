@@ -29,19 +29,13 @@ class Game
 		AssetManager.LoadRequiredAssets();
 
 		// Put the player on the main menu
-		GameManager.Screen = GameScreen.MAIN_MENU;
+		GameManager.SetScene(new MainMenu());
 	}
 
 	// Runs every frame
 	private static void Update()
 	{
-		// Check for what game screen is visible
-		switch (GameManager.Screen)
-		{
-			case GameScreen.MAIN_MENU:
-				MainMenu.Update();
-				break;
-		}
+		GameManager.UpdateCurrentScene();
 	}
 
 	// Runs after every update frame
@@ -65,13 +59,7 @@ class Game
 			return;
 		}
 
-		// Check for what game screen is visible
-		switch (GameManager.Screen)
-		{
-			case GameScreen.MAIN_MENU:
-				MainMenu.Render();
-				break;
-		}
+		GameManager.RenderCurrentScene();
 
 		Raylib.EndDrawing();
 	}

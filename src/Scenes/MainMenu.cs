@@ -1,15 +1,15 @@
 using System.Numerics;
 using Raylib_cs;
 
-class MainMenu
+class MainMenu : Scene
 {
-	public static void Update()
+	public override void Update()
 	{
 		// Check for if a key is pressed
-		if (Raylib.GetKeyPressed() != 0) GameManager.Screen = GameScreen.SONG_SELECT_MENU;
+		if (Raylib.GetKeyPressed() != 0) GameManager.SetScene(new SongSelect());
 	}
 
-	public static void Render()
+	public override void Render()
 	{
 		// Draw the background
 		// TODO: Don't resize every frame
