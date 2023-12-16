@@ -117,14 +117,16 @@ class SongSelect : Scene
 		// Check for if the current song is selected
 		if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER) || Raylib.IsKeyPressed(KeyboardKey.KEY_KP_ENTER))
 		{
-			Console.WriteLine($"Selected song {songs[songSelectionIndex].Name}!!!");
 			// Load the song
-			//! GameManager.SetScene();
+			GameManager.SetScene(new Stage(songs[songSelectionIndex]));
 		}
 
 		// Clamp the index to the length of the songs array thing
 		if (songSelectionIndex < 0) songSelectionIndex = songs.Count - 1;
 		else if (songSelectionIndex > songs.Count - 1) songSelectionIndex = 0;
+
+		// Check for if they wanna go back to main menu for some reason
+		if (Raylib.IsKeyPressed(KeyboardKey.KEY_ESCAPE)) GameManager.SetScene(new MainMenu());
 	}
 
 	public override void Render()
