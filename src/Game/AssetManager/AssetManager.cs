@@ -15,6 +15,9 @@ class AssetManager
 		Assets.LoadingScreen = Raylib.LoadTexture(assets + "loading.png");
 		Game.Loading = true;
 
+		// Initialize the audio stuff
+		Raylib.InitAudioDevice();
+
 		// Load the fonts
 		Assets.TitleFont = Raylib.LoadFont(assets + "fonts/BERNHC.TTF");
 		Assets.MainFont = Raylib.LoadFont(assets + "fonts/STENCIL.TTF");
@@ -22,6 +25,7 @@ class AssetManager
 		// Load the backgrounds
 		Assets.MainMenuBackground = Raylib.LoadTexture(assets + "background/main-menu.png");
 		Assets.SongSelectBackground = Raylib.LoadTexture(assets + "background/song-select.png");
+		Assets.StageBackground = Raylib.LoadTexture(assets + "background/stage.png");
 
 		// Finished loading
 		Game.Loading = false;
@@ -40,5 +44,6 @@ class AssetManager
 		// Backgrounds
 		public static Texture2D MainMenuBackground;
 		public static Texture2D SongSelectBackground;
+		public static Texture2D StageBackground;
 	}
 }
