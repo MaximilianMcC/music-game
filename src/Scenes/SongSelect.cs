@@ -1,7 +1,10 @@
+using System.Numerics;
 using Raylib_cs;
 
 class SongSelect : Scene
 {
+	List<Song> songs = new List<Song>();
+	int songSelectionIndex = 0;
 
 	public override void Start()
 	{
@@ -82,13 +85,23 @@ class SongSelect : Scene
 				char[] noteLine = lines[i].ToCharArray();
 				
 				// Get all of the notes
-				const int lanes = 4;
-				for (int j = 0; j < lanes; j++)
+				//? 4 lanes
+				for (int j = 0; j < 4; j++)
 				{
 					Note note = new Note(j, noteLine[j]);
 					notes.Add(note);
 				}
 			}
+
+			// Add the notes to the song
+			currentSong.Notes = notes;
+
+			// Load the cover image and actual music/song
+			currentSong.CoverImage = Raylib.LoadTexture(Path.Combine(currentSongPath, "cover.png"));
+			currentSong.Music = Raylib.LoadMusicStream(Path.Combine(currentSongPath, "song.mp3"));
+
+			// Add the song to the list of currently loaded songs
+			songs.Add(currentSong);
 		}
 
 		// Stop loading
@@ -97,11 +110,73 @@ class SongSelect : Scene
 
 	public override void Update()
 	{
-		
+		// Check for if the index is going up or down
+		if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP)) songSelectionIndex--;
+		if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN)) songSelectionIndex++;
+
+		// Check for if the current song is selected
+		if (Raylib.IsKeyPressed(KeyboardKey.KEY_ENTER) || Raylib.IsKeyPressed(KeyboardKey.KEY_KP_ENTER))
+		{
+			Console.WriteLine($"Selected song {songs[songSelectionIndex].Name}!!!");
+			// Load the song
+			//! GameManager.SetScene();
+		}
+
+		// Clamp the index to the length of the songs array thing
+		if (songSelectionIndex < 0) songSelectionIndex = songs.Count - 1;
+		else if (songSelectionIndex > songs.Count - 1) songSelectionIndex = 0;
 	}
 
 	public override void Render()
 	{
+		const int padding = 50;
+		const int padding2 = padding * 2;
+		const int paddingHalf = padding / 2;
 
+		// Draw the background
+		// TODO: Don't resize every frame
+		// TODO: Don't do the resize calculations in Render();
+		AssetManager.Assets.SongSelectBackground.Width = Raylib.GetScreenWidth();
+		AssetManager.Assets.SongSelectBackground.Height = Raylib.GetScreenHeight();
+		Raylib.DrawTexture(AssetManager.Assets.SongSelectBackground, 0, 0, Color.WHITE);
+
+		// Draw the select song title text thing
+		Raylib.DrawTextEx(AssetManager.Assets.TitleFont, "Selecting song rn", new Vector2(20, 20), 50, (50 / 10), Color.RED);
+
+		// Draw all of the songs
+		int y = 100;
+		for (int i = 0; i < songs.Count; i++)
+		{
+			// Draw the background
+			Raylib.DrawRectangleGradientH(padding, y, Raylib.GetScreenWidth() - padding2, 160, Color.BLACK, Color.DARKBLUE);
+
+			// Draw the song name and artist/mapper
+			Raylib.DrawTextEx(AssetManager.Assets.MainFont, songs[i].Name, new Vector2(padding, y + paddingHalf), 30, (10 / 30), Color.WHITE);
+			Raylib.DrawTextEx(AssetManager.Assets.MainFont, $"by {songs[i].Artist} & {songs[i].Mapper}", new Vector2(padding, y + paddingHalf + 30), 15, (10 / 15), Color.WHITE);
+
+			// Parse the song difficulty
+			string[] difficulties = new string[] { "Easy", "norma l", "merium", "hard" };
+			string difficulty = difficulties[(int)songs[i].Difficulty - 1];
+
+			// Draw the song difficulty
+			Raylib.DrawTextEx(AssetManager.Assets.MainFont, "difficulty", new Vector2(padding, y + paddingHalf + 80), 20, (10 / 20), Color.WHITE);
+			Raylib.DrawTextEx(AssetManager.Assets.MainFont, difficulty, new Vector2(padding, y + paddingHalf + 100), 30, (10 / 30), Color.WHITE);
+
+			// Draw the song cover image
+			int coverImageWidth = 200;
+			Texture2D coverImage = songs[i].CoverImage;
+			coverImage.Width = coverImageWidth;
+			coverImage.Height = 160;
+			Raylib.DrawTexture(coverImage, Raylib.GetScreenWidth() - padding - coverImageWidth, y, Color.WHITE);
+
+			// Draw an outline if the current song is selected
+			if (songSelectionIndex == i)
+			{
+				Raylib.DrawRectangleLinesEx(new Rectangle(padding - 5, y, Raylib.GetScreenWidth() - padding2 + 10, 165), 5, Color.YELLOW);
+			}
+
+			// Increase y for next song
+			y += 160 + padding;
+		}
 	}
 }

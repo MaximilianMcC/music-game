@@ -11,36 +11,12 @@ class Song
 	public float Duration { get; set; }
 
 	// Song assets
-	public Texture2D Cover { get; private set; }
-	public Music Music { get; private set; }
+	public Texture2D CoverImage { get; set; }
+	public Music Music { get; set; }
 
 	// Actual song
-	public List<Note> Notes { get; private set; }
-
-	// Make a new song thing
-	/*
-	public Song(string name, string artist, string mapper, int difficulty, float duration, string coverBase64, string musicBase64)
-	{
-		// Assign the basic information
-		Name = name;
-		Artist = artist;
-		Mapper = mapper;
-		Difficulty = (Difficulty)difficulty;
-		Duration = duration;
-
-		// Convert the base64 cover to a RayLib texture
-		byte[] coverBytes = Convert.FromBase64String(coverBase64);
-		Image coverImage = Raylib.LoadImageFromMemory("png", coverBytes);
-		Cover = Raylib.LoadTextureFromImage(coverImage);
-
-		// Convert the base64 music to RayLib music
-		byte[] musicBytes = Convert.FromBase64String(musicBase64);
-		Music = Raylib.LoadMusicStreamFromMemory("mp3", musicBytes);
-	}
-	*/
+	public List<Note> Notes { get; set; }
 }
-
-
 
 // TODO: Add `ToString()` type things using attributes
 enum Difficulty

@@ -19,8 +19,9 @@ class AssetManager
 		Assets.TitleFont = Raylib.LoadFont(assets + "fonts/BERNHC.TTF");
 		Assets.MainFont = Raylib.LoadFont(assets + "fonts/STENCIL.TTF");
 
-		// Load the main menu background
+		// Load the backgrounds
 		Assets.MainMenuBackground = Raylib.LoadTexture(assets + "background/main-menu.png");
+		Assets.SongSelectBackground = Raylib.LoadTexture(assets + "background/song-select.png");
 
 		// Finished loading
 		Game.Loading = false;
@@ -36,7 +37,8 @@ class AssetManager
 		public static Font TitleFont;
 		public static Font MainFont;
 
-		// Main menu
+		// Backgrounds
 		public static Texture2D MainMenuBackground;
+		public static Texture2D SongSelectBackground;
 	}
 }
