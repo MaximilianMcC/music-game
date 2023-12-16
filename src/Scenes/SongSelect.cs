@@ -3,77 +3,105 @@ using Raylib_cs;
 class SongSelect : Scene
 {
 
-    public override void Start()
-    {
-        // Load all of the songs
+	public override void Start()
+	{
+		// Load all of the songs
 		Game.Loading = true;
 
 		string songsPath = "./songs";
-		foreach (string songFile in Directory.GetFiles(songsPath))
+		foreach (string currentSongPath in Directory.GetDirectories(songsPath))
 		{
-			// Ignore anything that isn't a song file
-			if (!songFile.EndsWith(".song")) continue;
+			// Check for if the current song directory has all of the
+			// Required files (*.song, song.mp3, cover.png)
+			bool allFilesExist = Directory.GetFiles(currentSongPath, "*.song").Any() 
+				&& File.Exists(Path.Combine(currentSongPath, "song.mp3"))
+				&& File.Exists(Path.Combine(currentSongPath, "cover.png"));
+			if (allFilesExist == false)
+			{
+				// TODO: Say exactly what files are missing
+				Console.WriteLine($"Error while loading song at '{currentSongPath}'. Missing files");
+			}
+
+			// Make a song object
+			Song currentSong = new Song();
 
 			// Parse all of the song data
-			string[] songData = File.ReadAllLines(songFile);
-			for (int i = 0; i < songData.Length; i++)
+			// TODO: Add comments
+			string songFile = Directory.GetFiles(currentSongPath, "*.song")[0];
+			string[] lines = File.ReadAllLines(songFile);
+
+			// Keep track of where the song data index starts first
+			int songDataStartIndex = 0;
+
+			// Loop through every line and parse to get `property` values
+			for (int i = 0; i < lines.Length; i++)
 			{
-				string line = songData[i];
+				// Get the current line information
+				string[] currentLine = lines[i].Split(":");
+				string key = currentLine[0].Trim();
+				string value = (currentLine.Length > 1) ? currentLine[1].Trim() : ""; //? set to "" if no value
 
-				// Check for if the current line is a comment
-				// and ignore/skip over it
-				// TODO: Check for if the line contains an inline comment
-				if (line.StartsWith("#")) continue;
-
-				// Get the song name
-				string name = "";
-				if (line.StartsWith("name:")) name = line.Split(":")[1].Trim();
-
-				// Get the song artist
-				string artist = "";
-				if (line.StartsWith("artist:")) artist = line.Split(":")[1].Trim();
-
-				// Get the song mapper
-				string mapper = "";
-				if (line.StartsWith("artist:")) mapper = line.Split(":")[1].Trim();
-
-				// Get the song difficulty
-				int difficulty = 0;
-				if (line.StartsWith("difficulty:")) difficulty = int.Parse(line.Split(":")[1].Trim());
-
-				// Get the song cover
-				string cover = "";
-				if (line.StartsWith("cover:")) cover = line.Split(":")[1].Trim();
-
-				// Get thr song music
-				string music = "";
-				if (line.StartsWith("music:")) music = line.Split(":")[1].Trim();
-
-				// Check for if we have all of the required data. If we do
-				// then we can start parsing the song notes/beatmap
-				bool informationGathered = name != "" && mapper != "" && difficulty != 0 && cover != "" && music != "";
-				if (informationGathered)
+				// Get the current lines property stuff
+				switch (key)
 				{
-					// Make the song object
-					Song song = new Song(name, artist, mapper, difficulty, cover, music);
+					case "name":
+						currentSong.Name = value;
+						break;
 
-					// Loop through each note and get its time, lane, and type.
+					case "artist":
+						currentSong.Artist = value;
+						break;
+
+					case "mapper":
+						currentSong.Mapper = value;
+						break;
+
+					case "difficulty":
+						currentSong.Difficulty = (Difficulty)int.Parse(value);
+						break;
+
+					case "duration":
+						currentSong.Duration = float.Parse(value);
+						break;
+
+					case "music":
+						songDataStartIndex = i + 1;
+						break;
 				}
 			}
 
+			// Loop through every note and add it to the song
+			List<Note> notes = new List<Note>();
+
+			// Start at song data index to avoid going through all of the properties
+			//TODO: Could also do `for (int i = 0; i < lines.Length - songDataStartIndex; i++)`
+			for (int i = songDataStartIndex; i < lines.Length; i++)
+			{
+				// Get an array of notes on the current row
+				// TODO: Sort into lanes or something idk. Also introduce timing somewhere
+				char[] noteLine = lines[i].ToCharArray();
+				
+				// Get all of the notes
+				const int lanes = 4;
+				for (int j = 0; j < lanes; j++)
+				{
+					Note note = new Note(j, noteLine[j]);
+					notes.Add(note);
+				}
+			}
 		}
 
 		// Stop loading
 		Game.Loading = false;
-    }
+	}
 
-    public override void Update()
-    {
-        
-    }
+	public override void Update()
+	{
+		
+	}
 
-    public override void Render()
-    {
+	public override void Render()
+	{
 
-    }
+	}
 }
