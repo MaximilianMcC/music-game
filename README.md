@@ -45,7 +45,23 @@ music:
 ....
 ....
 ....
-```Everything gotta be this exact way (spaces and whatnot) until I clutch up and don't make a lazy parser (index based🤪🤪)
+```
+Everything gotta be this exact way (spaces and whatnot) until I clutch up and don't make a lazy parser (index based🤪🤪)
+
+# New format
+all the top stuff the same i think but then for the actual music its like this:
+```song
+<time (in milliseconds)>:<note type (same character as last time)><lane number (1-4)>
+```
+So this is something where it just goes up every second with a normal note
+```song
+music:
+1000:#1
+2000:#2
+3000:#3
+4000:#4
+```
+this one more difficult to write, but easier to parse !!
 
 ---
 # 🤺🤺🤺
