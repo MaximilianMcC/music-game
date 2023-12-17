@@ -6,7 +6,7 @@ class Stage : Scene
 	private static Song song;
 	private int combo;
 	private bool[] pressedLanes = new bool[4];
-	private float[] laneAnimationCounter = new float[4]; //? ms
+	private float[] laneAnimationCounter = new float[4];
 
 
 	public Stage(Song selectedSong)
@@ -25,16 +25,20 @@ class Stage : Scene
 		// Play/update the music
 		Raylib.UpdateMusicStream(song.Music);
 
+		
+
 		// Get keyboard input
 		// TODO: Do something for holds
-		pressedLanes[0] = Raylib.IsKeyPressed(Settings.Lane1);
-		pressedLanes[1] = Raylib.IsKeyPressed(Settings.Lane2);
-		pressedLanes[2] = Raylib.IsKeyPressed(Settings.Lane3);
-		pressedLanes[3] = Raylib.IsKeyPressed(Settings.Lane4);
+		pressedLanes[0] = Raylib.IsKeyPressed(Settings.Lane1) || Raylib.IsKeyPressed(Settings.Lane1Alt);
+		pressedLanes[1] = Raylib.IsKeyPressed(Settings.Lane2) || Raylib.IsKeyPressed(Settings.Lane2Alt);
+		pressedLanes[2] = Raylib.IsKeyPressed(Settings.Lane3) || Raylib.IsKeyPressed(Settings.Lane3Alt);
+		pressedLanes[3] = Raylib.IsKeyPressed(Settings.Lane4) || Raylib.IsKeyPressed(Settings.Lane4Alt);
 
 		// Update the opacity animations
+		// TODO: Don't update if holding down
 		for (int i = 0; i < 4; i++)
 		{
+			// Move the opacity closer to 0 (nothing)
 			//? 100 is just some random number to speed it up otherwise it takes like 5 minutes to go back to 0
 			if (laneAnimationCounter[i] > 0) laneAnimationCounter[i] -= (100 * Raylib.GetFrameTime());
 
@@ -50,6 +54,7 @@ class Stage : Scene
 		const int paddingHalf = padding / 2;
 
 		// Draw the background
+		// TODO: Move the background around on a sine wave or something
 		// TODO: Don't resize every frame
 		// TODO: Don't do the resize calculations in Render();
 		AssetManager.Assets.StageBackground.Width = Raylib.GetScreenWidth();
