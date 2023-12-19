@@ -20,6 +20,7 @@ class Stage : Scene
 	private int noteIndex;
 
 	// Scoring stuff
+	private float scoreY;
 	private int combo = 0;
 	private int scoreMultiplier = 1;
 	private bool overdrive = false;
@@ -41,6 +42,12 @@ class Stage : Scene
 		// Play/update the music
 		Raylib.UpdateMusicStream(song.Music);
 
+
+
+		// TODO: Don't do at all
+		// TODO: Only do when resize
+		// TODO: Remove
+		scoreY = Raylib.GetScreenHeight() - 150;
 
 
 		// Get the current time
@@ -83,7 +90,11 @@ class Stage : Scene
 		// is synced with the audio
 		foreach (Note note in spawnedNotes)
 		{
-			
+			// Move the note down
+			note.Y += song.Bps;
+
+			//! This thing works, but its backwards and feels too fast
+			// note.Y = Raylib.GetScreenHeight() - (float)((currentTime - previousTime) / (1 / song.Bps)) * Raylib.GetScreenHeight();
 		}
 
 
@@ -144,7 +155,6 @@ class Stage : Scene
 		Raylib.DrawTextEx(AssetManager.Assets.MainFont, combo.ToString(), Vector2.Zero, 50, (50 / 10), Color.LIME);
 
 		// Draw the notes
-		int y = Raylib.GetScreenHeight() - 100;
 		int noteWidth = 130;
 		int noteHeight = 30;
 
@@ -159,11 +169,31 @@ class Stage : Scene
 			laneXPositions[i] = (centerX - (2 * noteWidth + padding) + i * (noteWidth + padding)) - paddingHalf;
 		}
 
+
+
+
+
+
+
+
 		// Draw the falling notes
 		for (int i = 0; i < spawnedNotes.Count; i++)
 		{
-			Raylib.DrawRectangle(laneXPositions[spawnedNotes[i].Lane - 1], (int)spawnedNotes[i].Y, noteWidth, noteHeight, Color.BEIGE);
+			// Check for the note type and change color depending
+			// TODO: Use switch
+			Color color = Color.BEIGE;
+			if (spawnedNotes[i].Type == NoteType.NONE) color = new Color(0, 0, 0, 0);
+
+			// Draw the note
+			Raylib.DrawRectangle(laneXPositions[spawnedNotes[i].Lane], (int)spawnedNotes[i].Y, noteWidth, noteHeight, color);
 		}
+
+
+
+
+
+
+
 
 		// Loop through all of the bottom notes and draw them
 		for (int i = 0; i < lanes; i++)
@@ -185,11 +215,11 @@ class Stage : Scene
 				Color color = new Color((byte)255, (byte)255, (byte)255, opacityPercentage);
 
 				// Draw the opacity thingy
-				Raylib.DrawRectangleRounded(new Rectangle(laneXPositions[i], y, noteWidth, noteHeight), 1, 1, color);
+				Raylib.DrawRectangleRounded(new Rectangle(laneXPositions[i], scoreY, noteWidth, noteHeight), 1, 1, color);
 			}
 
 			// Outline (always shows)
-			Raylib.DrawRectangleRoundedLines(new Rectangle(laneXPositions[i], y, noteWidth, noteHeight), 1, 1, 5f, Color.LIME);
+			Raylib.DrawRectangleRoundedLines(new Rectangle(laneXPositions[i], scoreY, noteWidth, noteHeight), 1, 1, 5f, Color.LIME);
 		}
 	}
 }
