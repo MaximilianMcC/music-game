@@ -7,8 +7,10 @@ class Song
 	public string Name { get; set; }
 	public string Artist { get; set; }
 	public string Mapper { get; set; }
+	
 	public Difficulty Difficulty { get; set; }
-	public float Duration { get; set; }
+	public float Bpm { get; set; }              //? Beats per minute
+	public float Bps { get; set; }             //? Beats per second
 
 	// Song assets
 	public Texture2D CoverImage { get; set; }
@@ -32,43 +34,23 @@ enum Difficulty
 // TODO: Split up the song into "sections" for loading/unloading groups of notes. Performance shouldn't be an issue though
 class Note
 {
-	// TODO: Add timestamp or something
 	public int Lane { get; private set; }
-	public NoteType? Type { get; private set; }
+	public NoteType? Type { get; set; }
+	public double Timestamp { get; private set; }
+	public float Y { get; set; }
 
-	public Note(int lane, char noteType)
+	public Note(int lane, NoteType noteType, double timestamp)
 	{
-		// Set the lane
+		// Set everything
 		Lane = lane;
-
-		// Parse the note type
-		switch (noteType)
-		{
-			case '#':
-				Type = NoteType.NORMAL;
-				break;
-			
-			case '@':
-				Type = NoteType.OVERDRIVE;
-				break;
-
-			case '$':
-				Type = NoteType.HOLD;
-				break;
-			
-			// Nothing/empty
-			// `.` is used in file, but it can be anything
-			default:
-				Type = null;
-				break;
-		}
+		Type = noteType;
+		Timestamp = timestamp;
 	}
 }
 
-// TODO: Add map to the note characters in file. Could set value to the note ascii value, but sounds kinda dodgy
 enum NoteType
 {
-	NORMAL,
-	OVERDRIVE,
-	HOLD
+	NORMAL = '#',
+	OVERDRIVE = '@',
+	HOLD = '$'
 }

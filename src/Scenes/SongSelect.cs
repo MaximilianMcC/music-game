@@ -41,7 +41,7 @@ class SongSelect : Scene
 			{
 				// Get the current line information
 				string[] currentLine = lines[i].Split(":");
-				string key = currentLine[0].Trim();
+				string key = currentLine[0].Trim().ToLower();
 				string value = (currentLine.Length > 1) ? currentLine[1].Trim() : ""; //? set to "" if no value
 
 				// Get the current lines property stuff
@@ -63,8 +63,10 @@ class SongSelect : Scene
 						currentSong.Difficulty = (Difficulty)int.Parse(value);
 						break;
 
-					case "duration":
-						currentSong.Duration = float.Parse(value);
+					case "bpm":
+						//? Dividing by 60 gives beats per second
+						currentSong.Bpm = float.Parse(value);
+						currentSong.Bps = float.Parse(value) / 60;
 						break;
 
 					case "music":
@@ -80,17 +82,18 @@ class SongSelect : Scene
 			//TODO: Could also do `for (int i = 0; i < lines.Length - songDataStartIndex; i++)`
 			for (int i = songDataStartIndex; i < lines.Length; i++)
 			{
-				// Get an array of notes on the current row
-				// TODO: Sort into lanes or something idk. Also introduce timing somewhere
-				char[] noteLine = lines[i].ToCharArray();
-				
-				// Get all of the notes
-				//? 4 lanes
-				for (int j = 0; j < 4; j++)
-				{
-					Note note = new Note(j, noteLine[j]);
-					notes.Add(note);
-				}
+				// Get the timestamp that the note needs to be played (milliseconds)
+				double timestamp = double.Parse(lines[i].Split(":")[0]);
+
+				// Get the note type
+				NoteType noteType = (NoteType)lines[i].Split(":")[1][0];
+
+				// Get the lane position
+				int lane = int.Parse(lines[i][lines[i].Length - 1].ToString());
+
+				// Make a note from the data
+				Note note = new Note(lane, noteType, timestamp);
+				notes.Add(note);
 			}
 
 			// Add the notes to the song

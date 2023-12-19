@@ -1,6 +1,14 @@
 # music-game
 rhythm game music thingy piano tiles 2014
 
+> [!WARNING]
+> If you move the window when in a song the audio will go out of sync (raylib issue) 🤬🤬🤬
+
+# Plans and whatnot
+Nothing here confirmed btw
+- [ ] leaderboard for songs
+- [ ] Online song downloader/browser so you don't have to manually import songs
+- [ ] fancy ui for a song/map editor
 
 # How make a song
 To make a song then make a `.song` file inside of a directory with whatever name you want. The first section should contain a name, artist, mapper, difficult *(from 1 - 5, with 5 being hardest)*. A `#` is a comment btw. The duration part says how many **seconds** is waited before the next row is played. The cover image is always at `./cover.png` and the music/song is always at `./song.mp3`.
