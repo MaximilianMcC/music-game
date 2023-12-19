@@ -82,18 +82,20 @@ class SongSelect : Scene
 			//TODO: Could also do `for (int i = 0; i < lines.Length - songDataStartIndex; i++)`
 			for (int i = songDataStartIndex; i < lines.Length; i++)
 			{
-				// Get the timestamp that the note needs to be played (milliseconds)
-				double timestamp = double.Parse(lines[i].Split(":")[0]);
+				// Get all of the characters in the line
+				char[] currentNotes = lines[i].ToCharArray();
 
-				// Get the note type
-				NoteType noteType = (NoteType)lines[i].Split(":")[1][0];
+				// Loop through each note and get the data
+				//? 4 lanes
+				for (int j = 0; j < 4; j++)
+				{
+					// Get the note type
+					NoteType noteType = (NoteType)currentNotes[j];
 
-				// Get the lane position
-				int lane = int.Parse(lines[i][lines[i].Length - 1].ToString());
-
-				// Make a note from the data
-				Note note = new Note(lane, noteType, timestamp);
-				notes.Add(note);
+					// Make a note from the data
+					Note note = new Note(j, noteType);
+					notes.Add(note);
+				}
 			}
 
 			// Add the notes to the song

@@ -8,7 +8,9 @@ rhythm game music thingy piano tiles 2014
 Nothing here confirmed btw
 - [ ] leaderboard for songs
 - [ ] Online song downloader/browser so you don't have to manually import songs
-- [ ] fancy ui for a song/map editor
+- [ ] Fancy ui for a song/map editor
+- [ ] More advanced note types
+- [ ] Score can be added to notes. So if a note was in a very hard part of a song it could be worth more score
 
 # How make a song
 To make a song then make a `.song` file inside of a directory with whatever name you want. The first section should contain a name, artist, mapper, difficult *(from 1 - 5, with 5 being hardest)*. A `#` is a comment btw. The duration part says how many **seconds** is waited before the next row is played. The cover image is always at `./cover.png` and the music/song is always at `./song.mp3`.
@@ -56,7 +58,7 @@ music:
 ```
 Everything gotta be this exact way (spaces and whatnot) until I clutch up and don't make a lazy parser (index based🤪🤪)
 
-# New format
+## New format
 all the top stuff the same i think but then for the actual music its like this:
 ```song
 <time (in milliseconds)>:<note type (same character as last time)><lane number (1-4)>
@@ -70,6 +72,24 @@ music:
 4000:#4
 ```
 this one more difficult to write, but easier to parse !!
+
+## new new format
+erhmm so i'm changing back to old one again!! (previous too complicated to write (bad developer experiecen (not very good (valve please fix)))) so stuff looking like the below stuff. It starts from the bottom of the file, and each row/line is played every beat. In future update might add more flexibility like 3 times a beat or something but this is working for now trust
+```
+name: 60bpm debug
+artist: kid off youtube
+mapper: david semicolon (inventer of debugging)
+
+difficulty: 1
+bpm: 60
+
+music:
+...#
+..#.
+.#..
+#...
+```
+
 
 ---
 # 🤺🤺🤺

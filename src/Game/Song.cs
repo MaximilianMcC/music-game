@@ -36,15 +36,13 @@ class Note
 {
 	public int Lane { get; private set; }
 	public NoteType? Type { get; set; }
-	public double Timestamp { get; private set; }
 	public float Y { get; set; }
 
-	public Note(int lane, NoteType noteType, double timestamp)
+	public Note(int lane, NoteType noteType)
 	{
 		// Set everything
 		Lane = lane;
 		Type = noteType;
-		Timestamp = timestamp;
 	}
 }
 
@@ -52,5 +50,7 @@ enum NoteType
 {
 	NORMAL = '#',
 	OVERDRIVE = '@',
-	HOLD = '$'
+	HOLD = '$',
+
+	NONE = '.',
 }
