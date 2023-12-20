@@ -15,4 +15,7 @@ class Settings
 	public static KeyboardKey Lane2Alt { get; private set; } = KeyboardKey.KEY_F7;
 	public static KeyboardKey Lane3Alt { get; private set; } = KeyboardKey.KEY_F6;
 	public static KeyboardKey Lane4Alt { get; private set; } = KeyboardKey.KEY_F5;
+
+	// General keys
+	public static KeyboardKey Back { get; private set; } = KeyboardKey.KEY_ESCAPE;
 }
