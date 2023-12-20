@@ -4,6 +4,9 @@ rhythm game music thingy piano tiles 2014
 > [!WARNING]
 > If you move the window when in a song the audio will go out of sync (raylib issue) 🤬🤬🤬
 
+> [!WARNING]
+> Notes are 'physically' dropped down, instead of being dependant of the time so it may be a little inaccurate. will fix in a v2 trust!!
+
 # Plans and whatnot
 Nothing here confirmed btw
 - [ ] leaderboard for songs

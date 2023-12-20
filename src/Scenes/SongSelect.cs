@@ -131,7 +131,7 @@ class SongSelect : Scene
 		else if (songSelectionIndex > songs.Count - 1) songSelectionIndex = 0;
 
 		// Check for if they wanna go back to main menu for some reason
-		if (Raylib.IsKeyPressed(KeyboardKey.KEY_ESCAPE)) GameManager.SetScene(new MainMenu());
+		if (Raylib.IsKeyPressed(Settings.Back)) GameManager.SetScene(new MainMenu());
 	}
 
 	public override void Render()

@@ -4,8 +4,9 @@ using Raylib_cs;
 class Stage : Scene
 {
 	// Song stuff
-	private static Song song;
+	private Song song;
 	private const int lanes = 4;
+	private bool started = false;
 	private bool ended = false;
 
 	// Input stuff
@@ -30,25 +31,20 @@ class Stage : Scene
 		song = selectedSong;
 	}
 
-	public override void Start()
+    public override void Start()
+    {
+		// Set the initial previous time to the current time
+        previousTime = Raylib.GetTime();
+    }
+
+    public override void Update()
 	{
-		// Play the song
-		Raylib.PlayMusicStream(song.Music);
-		previousTime = Raylib.GetTime();
-	}
-
-	public override void Update()
-	{
-		// Play/update the music
-		Raylib.UpdateMusicStream(song.Music);
-
-
-
 		// TODO: Don't do at all
 		// TODO: Only do when resize
-		// TODO: Remove
-		scoreY = Raylib.GetScreenHeight() - 150;
+		scoreY = Raylib.GetScreenHeight() - 100;
 
+		// Play/update the music
+		Raylib.UpdateMusicStream(song.Music);
 
 		// Get the current time
 		double currentTime = Raylib.GetTime();
@@ -62,7 +58,6 @@ class Stage : Scene
 		if (currentTime >= nextBeatTime)
 		{
 			previousTime = nextBeatTime;
-			Console.WriteLine("Beat");
 			
 			// Spawn in the next row of notes
 			for (int i = 0; i < lanes; i++)
@@ -92,29 +87,43 @@ class Stage : Scene
 		{
 			// Move the note down
 			note.Y += song.Bps;
-
-			//! This thing works, but its backwards and feels too fast
-			// note.Y = Raylib.GetScreenHeight() - (float)((currentTime - previousTime) / (1 / song.Bps)) * Raylib.GetScreenHeight();
 		}
 
 
 		// TODO: Could do this all in a single for loop
 		// Check for if the note was pressed, and in which collision/scoring box
+		foreach (Note note in spawnedNotes)
+		{
+			if (note.Y > scoreY)
+			{
+				// Check for if the music hasn't already started
+				// If it hasn't, then start it
+				if (started == false)
+				{
+					// This ensures that the audio is always properly
+					// synced with the music by having it synced at the
 
+					// TODO: Could remove update stream. idk if its actually doing anything
+					Raylib.PlayMusicStream(song.Music);
+					Raylib.UpdateMusicStream(song.Music);
+					started = true;
+				}
+			}
+		}
 
-		// TODO: Could do this all in a single for loop
 		// Check for if the note is off the screen. if it is
 		// then remove it from the spawned notes list.
-
-
-
-
-
-
-
-
-
-
+		//? This is done here in a separate for loop because you can't
+		//? iterate through the list if it has been modified
+		for (int i = 0; i < spawnedNotes.Count; i++)
+		{
+			//! Some offscreen notes are kinda hanging back. They are 
+			//! Eventually getting destroyed, but they could be killed
+			//! quicker somehow
+			// TODO: Don't get height every frame. Define a "despawn" Y value or something
+			if (spawnedNotes[i].Y > Raylib.GetScreenHeight())
+				spawnedNotes.Remove(spawnedNotes[i]);
+		}
 
 		// Get keyboard input
 		// TODO: Do something for holds
@@ -122,6 +131,10 @@ class Stage : Scene
 		pressedLanes[1] = Raylib.IsKeyPressed(Settings.Lane2) || Raylib.IsKeyPressed(Settings.Lane2Alt);
 		pressedLanes[2] = Raylib.IsKeyPressed(Settings.Lane3) || Raylib.IsKeyPressed(Settings.Lane3Alt);
 		pressedLanes[3] = Raylib.IsKeyPressed(Settings.Lane4) || Raylib.IsKeyPressed(Settings.Lane4Alt);
+
+		// Check for if the player wants to go back
+		// TODO: Add confirm screen so you don't accidentally press it
+		if (Raylib.IsKeyPressed(Settings.Back)) GameManager.SetScene(new SongSelect());
 
 		// Update the opacity animations
 		// TODO: Don't update if holding down
