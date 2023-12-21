@@ -11,6 +11,7 @@ class Song
 	public Difficulty Difficulty { get; set; }
 	public float Bpm { get; set; }              //? Beats per minute
 	public float Bps { get; set; }             //? Beats per second
+	public float RowsPerBeat { get; set; }
 
 	// Song assets
 	public Texture2D CoverImage { get; set; }
@@ -37,12 +38,14 @@ class Note
 	public int Lane { get; private set; }
 	public NoteType? Type { get; set; }
 	public float Y { get; set; }
+	public bool Pressed { get; set; }
 
 	public Note(int lane, NoteType noteType)
 	{
 		// Set everything
 		Lane = lane;
 		Type = noteType;
+		Pressed = false;
 	}
 }
 

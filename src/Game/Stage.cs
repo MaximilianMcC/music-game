@@ -31,17 +31,21 @@ class Stage : Scene
 		song = selectedSong;
 	}
 
-    public override void Start()
-    {
+	public override void Start()
+	{
 		// Set the initial previous time to the current time
-        previousTime = Raylib.GetTime();
-    }
+		previousTime = Raylib.GetTime();
 
-    public override void Update()
+		// Set the volume
+		// TODO: Put in a menu thing and make it update when changed there
+		Raylib.SetMusicVolume(song.Music, Settings.SongVolume);
+	}
+
+	public override void Update()
 	{
 		// TODO: Don't do at all
 		// TODO: Only do when resize
-		scoreY = Raylib.GetScreenHeight() - 100;
+		scoreY = Raylib.GetScreenHeight() - 100; 
 
 		// Play/update the music
 		Raylib.UpdateMusicStream(song.Music);
@@ -50,7 +54,7 @@ class Stage : Scene
 		double currentTime = Raylib.GetTime();
 
 		// Get the time that the next beat should happen
-		double nextBeatTime = previousTime + (1 / song.Bps);
+		double nextBeatTime = previousTime + (1 / song.Bps) / song.RowsPerBeat;
 
 		// Spawn in the next row of notes every beat
 		// by checking for if the current time is over the 
@@ -79,6 +83,16 @@ class Stage : Scene
 		}
 
 
+
+		// Get keyboard input
+		// TODO: Do something for holds
+		pressedLanes[0] = Raylib.IsKeyPressed(Settings.Lane1) || Raylib.IsKeyPressed(Settings.Lane1Alt);
+		pressedLanes[1] = Raylib.IsKeyPressed(Settings.Lane2) || Raylib.IsKeyPressed(Settings.Lane2Alt);
+		pressedLanes[2] = Raylib.IsKeyPressed(Settings.Lane3) || Raylib.IsKeyPressed(Settings.Lane3Alt);
+		pressedLanes[3] = Raylib.IsKeyPressed(Settings.Lane4) || Raylib.IsKeyPressed(Settings.Lane4Alt);
+
+
+
 		// TODO: Could do this all in a single for loop
 		// Move all of the loaded in notes downwards
 		// at the rate of the songs bpm so the speed
@@ -87,27 +101,54 @@ class Stage : Scene
 		{
 			// Move the note down
 			note.Y += song.Bps;
-		}
 
-
-		// TODO: Could do this all in a single for loop
-		// Check for if the note was pressed, and in which collision/scoring box
-		foreach (Note note in spawnedNotes)
-		{
-			if (note.Y > scoreY)
+			// Check for if the note was pressed or held down at the correct time.
+			// Score is calculated by getting the distance between the score Y and
+			// the top of the score begin Y
+			float scoreYTop = scoreY - 50;
+			if (note.Y > scoreYTop && note.Y < scoreY)
 			{
-				// Check for if the music hasn't already started
-				// If it hasn't, then start it
-				if (started == false)
+				// Check for if the current note can be scored
+				// TODO: Guard clause
+				if (note.Type != NoteType.NONE && note.Pressed == false)					
 				{
-					// This ensures that the audio is always properly
-					// synced with the music by having it synced at the
+					// Check for if the correct key is being held down
+					if (pressedLanes[note.Lane] == true)
+					{
+						// Calculate the score (rounded to whole number)
+						// TODO: Properly round. Don't just cast
+						//! scoreY - note.y might be wrong!
+						int score = (int)((scoreY - note.Y) * scoreMultiplier);
+						Console.WriteLine(score);
 
-					// TODO: Could remove update stream. idk if its actually doing anything
-					Raylib.PlayMusicStream(song.Music);
-					Raylib.UpdateMusicStream(song.Music);
-					started = true;
+						// Increase the combo by 1
+						combo++;
+
+						// Say that the note has been pressed
+						note.Pressed = true;
+					}
+					else
+					{
+						// Reset the combo because they missed
+						combo = 0;
+
+						// Say that the note has been pressed
+						note.Pressed = true;
+					}
 				}
+			}
+
+			// Check for if the music hasn't already started
+			// If it hasn't, then start it when the first note hits
+			// the score line (works even if there are no notes)
+			if (note.Y > scoreY && started == false)
+			{
+				// This ensures that the audio is always properly
+				// synced with the music by having it synced at the
+				// TODO: Could remove update stream. idk if its actually doing anything
+				Raylib.PlayMusicStream(song.Music);
+				Raylib.UpdateMusicStream(song.Music);
+				started = true;
 			}
 		}
 
@@ -125,12 +166,10 @@ class Stage : Scene
 				spawnedNotes.Remove(spawnedNotes[i]);
 		}
 
-		// Get keyboard input
-		// TODO: Do something for holds
-		pressedLanes[0] = Raylib.IsKeyPressed(Settings.Lane1) || Raylib.IsKeyPressed(Settings.Lane1Alt);
-		pressedLanes[1] = Raylib.IsKeyPressed(Settings.Lane2) || Raylib.IsKeyPressed(Settings.Lane2Alt);
-		pressedLanes[2] = Raylib.IsKeyPressed(Settings.Lane3) || Raylib.IsKeyPressed(Settings.Lane3Alt);
-		pressedLanes[3] = Raylib.IsKeyPressed(Settings.Lane4) || Raylib.IsKeyPressed(Settings.Lane4Alt);
+
+
+
+
 
 		// Check for if the player wants to go back
 		// TODO: Add confirm screen so you don't accidentally press it
@@ -165,7 +204,7 @@ class Stage : Scene
 
 		// Draw the combo text
 		// TODO: Add text saying "combo" above or below
-		Raylib.DrawTextEx(AssetManager.Assets.MainFont, combo.ToString(), Vector2.Zero, 50, (50 / 10), Color.LIME);
+		Raylib.DrawTextEx(AssetManager.Assets.MainFont, $"Combo: {combo}", Vector2.Zero, 50, (50 / 10), Color.LIME);
 
 		// Draw the notes
 		int noteWidth = 130;
@@ -184,11 +223,6 @@ class Stage : Scene
 
 
 
-
-
-
-
-
 		// Draw the falling notes
 		for (int i = 0; i < spawnedNotes.Count; i++)
 		{
@@ -200,11 +234,6 @@ class Stage : Scene
 			// Draw the note
 			Raylib.DrawRectangle(laneXPositions[spawnedNotes[i].Lane], (int)spawnedNotes[i].Y, noteWidth, noteHeight, color);
 		}
-
-
-
-
-
 
 
 
@@ -233,6 +262,29 @@ class Stage : Scene
 
 			// Outline (always shows)
 			Raylib.DrawRectangleRoundedLines(new Rectangle(laneXPositions[i], scoreY, noteWidth, noteHeight), 1, 1, 5f, Color.LIME);
+		}
+
+		//! debug crap for scoring
+		{
+			float width = Raylib.GetScreenWidth();
+			float height;
+
+			// Draw a line at score Y
+			Raylib.DrawLineEx(new Vector2(0, scoreY), new Vector2(width, scoreY), 5f, Color.WHITE);
+
+
+			// Draw a box above the score Y
+			float scoreYTop = scoreY - 50;
+			height = scoreYTop - scoreY;
+			Raylib.DrawRectangleRec(new Rectangle(0, Raylib.GetScreenHeight() - 50, width, scoreY), new Color(255, 0, 0, 128));
+			// Raylib.DrawRectangleRec(new Rectangle(0, height, width, scoreY), new Color(255, 0, 0, 128));
+
+
+			// Draw a box below the score Y
+			// float scoreYBottom = scoreY - 50;
+			// height = scoreY - scoreYBottom;
+			// Raylib.DrawRectangleRec(new Rectangle(0, scoreY, width, height), new Color(0, 255, 0, 128));
+
 		}
 	}
 }

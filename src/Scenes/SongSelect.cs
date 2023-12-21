@@ -69,6 +69,10 @@ class SongSelect : Scene
 						currentSong.Bps = float.Parse(value) / 60;
 						break;
 
+					case "rowsperbeat":
+						currentSong.RowsPerBeat = int.Parse(value);
+						break;
+
 					case "music":
 						songDataStartIndex = i + 1;
 						break;

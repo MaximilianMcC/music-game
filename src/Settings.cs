@@ -18,4 +18,7 @@ class Settings
 
 	// General keys
 	public static KeyboardKey Back { get; private set; } = KeyboardKey.KEY_ESCAPE;
+
+	// Options
+	public static float SongVolume { get; set; } = 0.1f;
 }
