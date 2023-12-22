@@ -23,6 +23,7 @@ class Stage : Scene
 	// Scoring stuff
 	private float scoreY;
 	private int combo = 0;
+	private int score;
 	private int scoreMultiplier = 1;
 	private bool overdrive = false;
 
@@ -85,7 +86,7 @@ class Stage : Scene
 
 
 		// Get keyboard input
-		// TODO: Do something for holds
+		// TODO: Make it so that you can't just hold it
 		pressedLanes[0] = Raylib.IsKeyPressed(Settings.Lane1) || Raylib.IsKeyPressed(Settings.Lane1Alt);
 		pressedLanes[1] = Raylib.IsKeyPressed(Settings.Lane2) || Raylib.IsKeyPressed(Settings.Lane2Alt);
 		pressedLanes[2] = Raylib.IsKeyPressed(Settings.Lane3) || Raylib.IsKeyPressed(Settings.Lane3Alt);
@@ -105,21 +106,37 @@ class Stage : Scene
 			// Check for if the note was pressed or held down at the correct time.
 			// Score is calculated by getting the distance between the score Y and
 			// the top of the score begin Y
-			float scoreYTop = scoreY - 50;
-			if (note.Y > scoreYTop && note.Y < scoreY)
+			float topY = scoreY - 50f;
+			float bottomY = scoreY + 25f;
+
+			if (note.Y > topY && note.Y < bottomY)
 			{
 				// Check for if the current note can be scored
-				// TODO: Guard clause
+				// TODO: Use a guard clause
 				if (note.Type != NoteType.NONE && note.Pressed == false)					
 				{
-					// Check for if the correct key is being held down
-					if (pressedLanes[note.Lane] == true)
+					Console.WriteLine($"Lane 1: {Settings.Lane1}\t|\tNote lane: {note.Lane}\t|\tpressed: {pressedLanes[note.Lane]}");
+					Console.WriteLine($"Lane 2: {Settings.Lane2}\t|\tNote lane: {note.Lane}\t|\tpressed: {pressedLanes[note.Lane]}");
+					Console.WriteLine($"Lane 3: {Settings.Lane3}\t|\tNote lane: {note.Lane}\t|\tpressed: {pressedLanes[note.Lane]}");
+					Console.WriteLine($"Lane 4: {Settings.Lane4}\t|\tNote lane: {note.Lane}\t|\tpressed: {pressedLanes[note.Lane]}");
+
+					// Check for if the correct key is being held down for the note
+					if (pressedLanes[note.Lane])
 					{
-						// Calculate the score (rounded to whole number)
-						// TODO: Properly round. Don't just cast
-						//! scoreY - note.y might be wrong!
-						int score = (int)((scoreY - note.Y) * scoreMultiplier);
-						Console.WriteLine(score);
+						// TODO: Calculate the score based on how close you were to scoreY
+						//! This is just a temporary way of getting score rn (if you get a note
+						//! in the top section then its "good", and if you get one in
+						//! the bottom section then it's "perfect") temporary!!
+						if (note.Y > scoreY)
+						{
+							score += 5 * scoreMultiplier;
+							Console.WriteLine("Good");
+						}
+						else
+						{
+							score += 10 * scoreMultiplier;
+							Console.WriteLine("Perfect");
+						}
 
 						// Increase the combo by 1
 						combo++;
@@ -267,24 +284,22 @@ class Stage : Scene
 		//! debug crap for scoring
 		{
 			float width = Raylib.GetScreenWidth();
-			float height;
+			float topHeight = 50f;
+			float bottomHeight = 25f;
 
-			// Draw a line at score Y
-			Raylib.DrawLineEx(new Vector2(0, scoreY), new Vector2(width, scoreY), 5f, Color.WHITE);
+			Color green = new Color(0, 255, 0, 128);
+			Color red = new Color(255, 0, 0, 128);
 
+			// Draw the top red box
+			Raylib.DrawRectangleRec(new Rectangle(0, (scoreY - topHeight), width, topHeight), red);
 
-			// Draw a box above the score Y
-			float scoreYTop = scoreY - 50;
-			height = scoreYTop - scoreY;
-			Raylib.DrawRectangleRec(new Rectangle(0, Raylib.GetScreenHeight() - 50, width, scoreY), new Color(255, 0, 0, 128));
-			// Raylib.DrawRectangleRec(new Rectangle(0, height, width, scoreY), new Color(255, 0, 0, 128));
+			// Draw the score line in the middle
+			Raylib.DrawLineEx(new Vector2(0, scoreY), new Vector2(width, scoreY), 5f, Color.BLACK);
 
-
-			// Draw a box below the score Y
-			// float scoreYBottom = scoreY - 50;
-			// height = scoreY - scoreYBottom;
-			// Raylib.DrawRectangleRec(new Rectangle(0, scoreY, width, height), new Color(0, 255, 0, 128));
-
+			// Draw the bottom green box
+			Raylib.DrawRectangleRec(new Rectangle(0, scoreY, width, bottomHeight), green);
 		}
+
+
 	}
 }
