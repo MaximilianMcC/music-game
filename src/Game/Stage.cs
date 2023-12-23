@@ -40,6 +40,9 @@ class Stage : Scene
 		// Set the volume
 		// TODO: Put in a menu thing and make it update when changed there
 		Raylib.SetMusicVolume(song.Music, Settings.SongVolume);
+
+		// Set the background image
+		BackgroundManager.BackgroundTexture = AssetManager.Assets.StageBackground;
 	}
 
 	public override void Update()
@@ -115,11 +118,6 @@ class Stage : Scene
 				// TODO: Use a guard clause
 				if (note.Type != NoteType.NONE && note.Pressed == false)					
 				{
-					Console.WriteLine($"Lane 1: {Settings.Lane1}\t|\tNote lane: {note.Lane}\t|\tpressed: {pressedLanes[note.Lane]}");
-					Console.WriteLine($"Lane 2: {Settings.Lane2}\t|\tNote lane: {note.Lane}\t|\tpressed: {pressedLanes[note.Lane]}");
-					Console.WriteLine($"Lane 3: {Settings.Lane3}\t|\tNote lane: {note.Lane}\t|\tpressed: {pressedLanes[note.Lane]}");
-					Console.WriteLine($"Lane 4: {Settings.Lane4}\t|\tNote lane: {note.Lane}\t|\tpressed: {pressedLanes[note.Lane]}");
-
 					// Check for if the correct key is being held down for the note
 					if (pressedLanes[note.Lane])
 					{
@@ -213,11 +211,7 @@ class Stage : Scene
 
 		// Draw the background
 		// TODO: Move the background around on a sine wave or something
-		// TODO: Don't resize every frame
-		// TODO: Don't do the resize calculations in Render();
-		AssetManager.Assets.StageBackground.Width = Raylib.GetScreenWidth();
-		AssetManager.Assets.StageBackground.Height = Raylib.GetScreenHeight();
-		Raylib.DrawTexture(AssetManager.Assets.StageBackground, 0, 0, Color.WHITE);
+		BackgroundManager.RenderBackground();
 
 		// Draw the combo text
 		// TODO: Add text saying "combo" above or below

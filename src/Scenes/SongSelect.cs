@@ -115,6 +115,9 @@ class SongSelect : Scene
 
 		// Stop loading
 		Game.Loading = false;
+
+		// Set the background texture
+		BackgroundManager.BackgroundTexture = AssetManager.Assets.SongSelectBackground;
 	}
 
 	public override void Update()
@@ -145,11 +148,7 @@ class SongSelect : Scene
 		const int paddingHalf = padding / 2;
 
 		// Draw the background
-		// TODO: Don't resize every frame
-		// TODO: Don't do the resize calculations in Render();
-		AssetManager.Assets.SongSelectBackground.Width = Raylib.GetScreenWidth();
-		AssetManager.Assets.SongSelectBackground.Height = Raylib.GetScreenHeight();
-		Raylib.DrawTexture(AssetManager.Assets.SongSelectBackground, 0, 0, Color.WHITE);
+		BackgroundManager.RenderBackground();
 
 		// Draw the select song title text thing
 		Raylib.DrawTextEx(AssetManager.Assets.TitleFont, "Selecting song rn", new Vector2(20, 20), 50, (50 / 10), Color.RED);

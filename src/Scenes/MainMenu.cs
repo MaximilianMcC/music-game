@@ -3,7 +3,12 @@ using Raylib_cs;
 
 class MainMenu : Scene
 {
-	public override void Update()
+    public override void Start()
+    {
+        BackgroundManager.BackgroundTexture = AssetManager.Assets.MainMenuBackground;
+    }
+
+    public override void Update()
 	{
 		// Check for if a key is pressed
 		if (Raylib.GetKeyPressed() != 0) GameManager.SetScene(new SongSelect());
@@ -12,11 +17,7 @@ class MainMenu : Scene
 	public override void Render()
 	{
 		// Draw the background
-		// TODO: Don't resize every frame
-		// TODO: Don't do the resize calculations in Render();
-		AssetManager.Assets.MainMenuBackground.Width = Raylib.GetScreenWidth();
-		AssetManager.Assets.MainMenuBackground.Height = Raylib.GetScreenHeight();
-		Raylib.DrawTexture(AssetManager.Assets.MainMenuBackground, 0, 0, Color.WHITE);
+		BackgroundManager.RenderBackground();
 
 		// Draw the title text
 		float titleFontSize = 120;
